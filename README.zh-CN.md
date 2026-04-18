@@ -1,0 +1,103 @@
+# NanaBot
+
+[English](README.md) | 简体中文
+
+娜娜 Bot 是一个基于 [NapCatQQ](https://github.com/NapNeko/NapCatQQ)、[NoneBot2](https://github.com/nonebot/nonebot2) 和 [OneBot V11](https://github.com/botuniverse/onebot-11) 的 QQ 机器人，允许 QQ 用户在私聊、群聊中与其互动。当前运行环境为 Python `3.11.3`。
+
+## 功能说明
+
+当前功能列表正在整理中。
+
+## 命令说明
+
+- `/ping`
+  用于检测机器人是否在线，返回 `pong`
+- `/help`
+  查看当前可用命令
+- `/about`
+  查看娜娜 Bot 的简介
+- `/whitelist`
+  查看群白名单和用户白名单（仅超管）
+- `/whitelist_add group <群号>`
+  将群加入白名单（仅超管）
+- `/whitelist_add user <QQ号>`
+  将用户加入白名单（仅超管）
+- `/whitelist_remove group <群号>`
+  将群移出白名单（仅超管）
+- `/whitelist_remove user <QQ号>`
+  将用户移出白名单（仅超管）
+
+## 安装依赖
+
+1. 创建或激活虚拟环境
+2. 通过依赖文件统一安装：
+
+```powershell
+python -m pip install -U pip
+python -m pip install -r requirements.txt
+```
+
+## 配置说明
+
+将 `.env.example` 重命名为 `.env`，然后填写你自己的配置。
+
+`.env` 示例：
+
+```env
+HOST=127.0.0.1
+PORT=8080
+LOG_LEVEL=INFO
+COMMAND_START=["/"]
+ONEBOT_ACCESS_TOKEN=replace-with-your-token
+SUPERUSERS=["你的QQ号"]
+```
+
+字段含义：
+
+- `HOST`：NanaBot 监听地址
+- `PORT`：NoneBot 服务端口
+- `LOG_LEVEL`：日志级别
+- `COMMAND_START`：NoneBot 识别命令时使用的前缀列表。当前配置为 `["/"]`，像 `/ping`、`/help` 会被识别为命令。
+- `ONEBOT_ACCESS_TOKEN`：NanaBot 与 NapCatQQ 之间共用的访问令牌，必须和 NapCatQQ 中配置的 Token 完全一致。
+- `SUPERUSERS`：允许管理安全配置和白名单命令的 QQ 账号列表。
+
+白名单数据存储在 `data/config.json`：
+
+```json
+{
+  "group_whitelist": [],
+  "user_whitelist": []
+}
+```
+
+## 启动 NanaBot
+
+在项目根目录执行：
+
+```powershell
+python main.py
+```
+
+## 连接 NapCatQQ
+
+- 仓库地址：<https://github.com/NapNeko/NapCatQQ>
+- 官方文档：<https://napneko.github.io/>
+
+安装并启动 NapCatQQ 后：
+
+1. 打开 NapCatQQ WebUI
+2. 进入网络配置
+3. 新建一个 `WebSocket Client`
+4. 将反向 WebSocket 地址设置为：
+
+```text
+ws://127.0.0.1:8080/onebot/v11/ws
+```
+
+5. 在 NapCatQQ 和 `.env` 中配置相同的 Token
+6. 启用连接，并确认状态变为已连接
+
+## 联系方式
+
+- 开发者：骚客
+- 邮箱：`2596818595@qq.com`（请注明来意）

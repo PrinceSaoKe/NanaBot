@@ -1,0 +1,1 @@
+"""NanaBot plugins package."""
