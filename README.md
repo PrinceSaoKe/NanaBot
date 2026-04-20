@@ -10,22 +10,35 @@ Current feature list is being organized.
 
 ## Command Description
 
+Regular user commands:
+
 - `/ping`
   Returns `pong` to verify connectivity.
 - `/help`
   Shows the current command list.
 - `/about`
   Shows a short introduction to NanaBot.
+
+Admin commands (superuser only):
+
 - `/whitelist`
-  Shows group and user whitelists (superuser only).
+  Shows group and user whitelists.
 - `/whitelist_add group <group_id>`
-  Adds a group to whitelist (superuser only).
+  Adds a group to whitelist.
 - `/whitelist_add user <qq_id>`
-  Adds a user to whitelist (superuser only).
+  Adds a user to whitelist.
 - `/whitelist_remove group <group_id>`
-  Removes a group from whitelist (superuser only).
+  Removes a group from whitelist.
 - `/whitelist_remove user <qq_id>`
-  Removes a user from whitelist (superuser only).
+  Removes a user from whitelist.
+- `/rate_limit`
+  Shows the current rate limit config.
+- `/rate_limit_on`
+  Enables rate limiting.
+- `/rate_limit_off`
+  Disables rate limiting.
+- `/rate_limit_set user|group|private <window_seconds> <max_requests> <block_seconds>`
+  Updates rate limit settings.
 
 ## Installation
 
@@ -59,16 +72,34 @@ Field notes:
 - `LOG_LEVEL`: The log verbosity level.
 - `COMMAND_START`: The command prefix list recognized by NoneBot. With `["/"]`, messages such as `/ping` and `/help` will be treated as commands.
 - `ONEBOT_ACCESS_TOKEN`: The shared access token used between NanaBot and NapCatQQ. It must match the token configured in NapCatQQ.
-- `SUPERUSERS`: QQ accounts allowed to manage security settings and whitelist commands.
+- `SUPERUSERS`: QQ accounts allowed to use admin commands.
 
-Whitelist data is persisted in `data/config.json`:
+Config data is persisted in `data/config.json`:
 
 ```json
 {
   "group_whitelist": [],
-  "user_whitelist": []
+  "user_whitelist": [],
+  "rate_limit": {
+    "enabled": true,
+    "user_window_seconds": 10,
+    "user_max_requests": 5,
+    "group_window_seconds": 10,
+    "group_max_requests": 15,
+    "private_window_seconds": 10,
+    "private_max_requests": 5,
+    "block_seconds": 30
+  }
 }
 ```
+
+Rate limit behavior:
+
+- Whitelist check runs before rate limiting.
+- Only command messages are rate-limited.
+- Group messages apply both `user` and `group` scopes.
+- Private messages apply both `user` and `private` scopes.
+- Superuser security management commands are exempt to avoid lockout.
 
 ## Run NanaBot
 

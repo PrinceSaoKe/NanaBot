@@ -10,22 +10,35 @@
 
 ## 命令说明
 
+普通用户命令：
+
 - `/ping`
   用于检测机器人是否在线，返回 `pong`
 - `/help`
   查看当前可用命令
 - `/about`
   查看娜娜 Bot 的简介
+
+管理员命令（仅超管）：
+
 - `/whitelist`
-  查看群白名单和用户白名单（仅超管）
+  查看群白名单和用户白名单
 - `/whitelist_add group <群号>`
-  将群加入白名单（仅超管）
+  将群加入白名单
 - `/whitelist_add user <QQ号>`
-  将用户加入白名单（仅超管）
+  将用户加入白名单
 - `/whitelist_remove group <群号>`
-  将群移出白名单（仅超管）
+  将群移出白名单
 - `/whitelist_remove user <QQ号>`
-  将用户移出白名单（仅超管）
+  将用户移出白名单
+- `/rate_limit`
+  查看当前限流配置
+- `/rate_limit_on`
+  开启限流
+- `/rate_limit_off`
+  关闭限流
+- `/rate_limit_set user|group|private <窗口秒数> <最大次数> <封禁秒数>`
+  更新限流参数
 
 ## 安装依赖
 
@@ -59,16 +72,34 @@ SUPERUSERS=["你的QQ号"]
 - `LOG_LEVEL`：日志级别
 - `COMMAND_START`：NoneBot 识别命令时使用的前缀列表。当前配置为 `["/"]`，像 `/ping`、`/help` 会被识别为命令。
 - `ONEBOT_ACCESS_TOKEN`：NanaBot 与 NapCatQQ 之间共用的访问令牌，必须和 NapCatQQ 中配置的 Token 完全一致。
-- `SUPERUSERS`：允许管理安全配置和白名单命令的 QQ 账号列表。
+- `SUPERUSERS`：允许使用管理员命令的 QQ 账号列表。
 
-白名单数据存储在 `data/config.json`：
+配置数据存储在 `data/config.json`：
 
 ```json
 {
   "group_whitelist": [],
-  "user_whitelist": []
+  "user_whitelist": [],
+  "rate_limit": {
+    "enabled": true,
+    "user_window_seconds": 10,
+    "user_max_requests": 5,
+    "group_window_seconds": 10,
+    "group_max_requests": 15,
+    "private_window_seconds": 10,
+    "private_max_requests": 5,
+    "block_seconds": 30
+  }
 }
 ```
+
+限流规则：
+
+- 先执行白名单检查，再执行限流检查
+- 仅对命令消息做限流
+- 群聊同时应用 `user` 和 `group` 两个维度
+- 私聊同时应用 `user` 和 `private` 两个维度
+- 超管执行安全管理命令时豁免限流，避免把机器人锁死
 
 ## 启动 NanaBot
 

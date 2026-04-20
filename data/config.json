@@ -3,5 +3,15 @@
   "user_whitelist": [
     "2263373457",
     "2596818595"
-  ]
+  ],
+  "rate_limit": {
+    "enabled": true,
+    "user_window_seconds": 10,
+    "user_max_requests": 5,
+    "group_window_seconds": 10,
+    "group_max_requests": 15,
+    "private_window_seconds": 10,
+    "private_max_requests": 5,
+    "block_seconds": 30
+  }
 }
