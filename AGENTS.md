@@ -4,7 +4,7 @@
 
 ## 1. 强制规则（Hard Rules）
 
-1. 注释必须使用中文。
+1. 注释必须使用中文。输出给用户的信息也必须用中文。
 2. 文档必须中英文同步更新。
    - 需要同步的文档至少包含 `README.md` 与 `README.zh-CN.md`。
 3. 新增命令后必须同步更新 README 的命令说明。
@@ -13,6 +13,7 @@
    - 示例：`add_to_whitelist(target_type, target_id)` 需要说明 `target_type` 仅允许 `group` 或 `user`。
 5. 所有对 `.env` 的修改都必须同步到 `.env.example`，并且必须脱敏。
    - `.env.example` 只能保留模板值，不允许包含真实 token、密钥、账号等敏感信息。
+6. 所有在 `data/config.json` 中新增的配置项都必须同步在 README 中进行说明。
 
 ## 2. 代码与注释规范（Code Style）
 
