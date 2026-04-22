@@ -18,6 +18,12 @@ Regular user commands:
   Shows only the commands available to the current user.
 - `/关于`
   Shows a short introduction to NanaBot.
+- `/今天吃什么`
+  Randomly recommends something to eat today.
+- `/今天喝什么`
+  Randomly recommends something to drink today.
+- `/查看菜单 菜品|饮品`
+  Shows all menu items for the given type.
 - `/猜成语`
   Starts one handle game.
 - `/提示`
@@ -27,15 +33,19 @@ Regular user commands:
 
 Admin commands (superuser only):
 
+- `/添加菜单 <名称> 菜品|饮品 <图片>`
+  Adds a menu image.
+- `/删除菜单 <名称> 菜品|饮品`
+  Deletes a menu image.
 - `/白名单`
   Shows group and user whitelists.
-- `/添加白名单 群 <group_id>`
+- `/添加白名单 群 <群号>`
   Adds a group to the whitelist.
-- `/添加白名单 用户 <qq_id>`
+- `/添加白名单 用户 <QQ号>`
   Adds a user to the whitelist.
-- `/移除白名单 群 <group_id>`
+- `/移除白名单 群 <群号>`
   Removes a group from the whitelist.
-- `/移除白名单 用户 <qq_id>`
+- `/移除白名单 用户 <QQ号>`
   Removes a user from the whitelist.
 - `/限流`
   Shows the current rate limit configuration.
@@ -43,7 +53,7 @@ Admin commands (superuser only):
   Enables rate limiting.
 - `/关闭限流`
   Disables rate limiting.
-- `/设置限流 用户|群|私聊 <window_seconds> <max_requests> <block_seconds>`
+- `/设置限流 用户|群|私聊 <窗口秒数> <最大次数> <封禁秒数>`
   Updates rate limit settings.
 
 ## Installation

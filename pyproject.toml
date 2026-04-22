@@ -8,6 +8,7 @@ dependencies = [
     "nonebot2[fastapi]<3.0.0,>=2.4.3",
     "nonebot-adapter-onebot<3.0.0,>=2.4.6",
     "nonebot_plugin_handle>=0.4.4",
+    "nonebot-plugin-whateat-pic>=1.5.7",
 ]
 
 [build-system]
@@ -16,3 +17,4 @@ build-backend = "setuptools.build_meta"
 
 [tool.nonebot.plugins]
 nonebot_plugin_handle = ["nonebot_plugin_handle"]
+nonebot-plugin-whateat-pic = ["nonebot_plugin_whateat_pic"]

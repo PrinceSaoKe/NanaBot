@@ -19,11 +19,14 @@ COMMAND_REGISTRY: list[CommandInfo] = [
     CommandInfo("/ping", "连通性测试"),
     CommandInfo("/帮助", "查看当前用户可执行的命令"),
     CommandInfo("/关于", "查看机器人简介"),
-
+    CommandInfo("/今天吃什么", "随机推荐今天吃什么"),
+    CommandInfo("/今天喝什么", "随机推荐今天喝什么"),
+    CommandInfo("/查看菜单 菜品|饮品", "查看对应类型的全部菜单"),
     CommandInfo("/猜成语", "开启一局汉兜游戏"),
     CommandInfo("/提示", "查看当前汉兜游戏提示"),
     CommandInfo("/结束", "结束当前汉兜游戏"),
-
+    CommandInfo("/添加菜单 <名称> 菜品|饮品 <图片>", "添加菜单图片", admin_only=True),
+    CommandInfo("/删除菜单 <名称> 菜品|饮品", "删除菜单图片", admin_only=True),
     CommandInfo("/白名单", "查看白名单", admin_only=True),
     CommandInfo("/添加白名单 群 <群号>", "添加群白名单", admin_only=True),
     CommandInfo("/添加白名单 用户 <QQ号>", "添加用户白名单", admin_only=True),
