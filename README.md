@@ -80,6 +80,7 @@ HOST=127.0.0.1
 PORT=8080
 LOG_LEVEL=INFO
 COMMAND_START=["/"]
+NICKNAME=["BotName"]
 ONEBOT_ACCESS_TOKEN=replace-with-your-token
 SUPERUSERS=["your-qq-number"]
 ```
@@ -91,6 +92,8 @@ Field notes:
 - `LOG_LEVEL`: The log verbosity level.
 - `COMMAND_START`: The command prefix list recognized by NoneBot. With `["/"]`, messages such as `/ping` and `/帮助`
   will be treated as commands.
+- `NICKNAME`: The bot nickname list used by NoneBot. Plugins such as `nonebot_plugin_whateat_pic` will use the first
+  nickname as the bot name shown in replies.
 - `ONEBOT_ACCESS_TOKEN`: The shared access token used between NanaBot and NapCatQQ. It must match the token configured in NapCatQQ.
 - `SUPERUSERS`: QQ accounts allowed to use admin commands.
 

@@ -79,6 +79,7 @@ HOST=127.0.0.1
 PORT=8080
 LOG_LEVEL=INFO
 COMMAND_START=["/"]
+NICKNAME=["Bot名字"]
 ONEBOT_ACCESS_TOKEN=replace-with-your-token
 SUPERUSERS=["你的QQ号"]
 ```
@@ -89,6 +90,7 @@ SUPERUSERS=["你的QQ号"]
 - `PORT`：NoneBot 服务端口。
 - `LOG_LEVEL`：日志级别。
 - `COMMAND_START`：NoneBot 识别命令时使用的前缀列表。当前配置为 `["/"]`，像 `/ping`、`/帮助` 会被识别为命令。
+- `NICKNAME`：NoneBot 使用的机器人昵称列表。`nonebot_plugin_whateat_pic` 这类插件会取第一个昵称作为回复中显示的机器人名字。
 - `ONEBOT_ACCESS_TOKEN`：NanaBot 与 NapCatQQ 之间共用的访问令牌，必须和 NapCatQQ 中配置的 Token 完全一致。
 - `SUPERUSERS`：允许使用管理员命令的 QQ 账号列表。
 
