@@ -50,6 +50,8 @@ python -m pip install -U pip
 python -m pip install -r requirements.txt
 ```
 
+3. 可选：使用 `nb plugin install <插件名>` 安装第三方 NoneBot 插件。写入 `pyproject.toml` 的插件会在启动时自动加载。
+
 ## 配置说明
 
 将 `.env.example` 重命名为 `.env`，然后填写你自己的配置。

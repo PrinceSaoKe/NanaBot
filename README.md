@@ -50,6 +50,9 @@ python -m pip install -U pip
 python -m pip install -r requirements.txt
 ```
 
+3. Optional: install third-party NoneBot plugins with `nb plugin install <plugin_name>`. Plugins declared in
+   `pyproject.toml` will be loaded automatically on startup.
+
 ## Configuration
 
 Rename `.env.example` to `.env`, then fill in your own configuration.

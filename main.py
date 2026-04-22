@@ -8,6 +8,7 @@ def main() -> None:
     driver = nonebot.get_driver()
     driver.register_adapter(OneBotV11Adapter)
 
+    nonebot.load_from_toml("pyproject.toml")
     nonebot.load_plugins("plugins")
     nonebot.run()
 
