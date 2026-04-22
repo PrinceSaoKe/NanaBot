@@ -6,7 +6,7 @@ NanaBot is a QQ bot built on top of [NapCatQQ](https://github.com/NapNeko/NapCat
 
 ## Feature Description
 
-Current feature list is being organized.
+The current feature list is still being organized.
 
 ## Command Description
 
@@ -14,30 +14,36 @@ Regular user commands:
 
 - `/ping`
   Returns `pong` to verify connectivity.
-- `/help`
-  Shows the current command list.
-- `/about`
+- `/帮助`
+  Shows only the commands available to the current user.
+- `/关于`
   Shows a short introduction to NanaBot.
+- `/猜成语`
+  Starts one handle game.
+- `/提示`
+  Shows one hint for the current handle game.
+- `/结束`
+  Ends the current handle game.
 
 Admin commands (superuser only):
 
-- `/whitelist`
+- `/白名单`
   Shows group and user whitelists.
-- `/whitelist_add group <group_id>`
-  Adds a group to whitelist.
-- `/whitelist_add user <qq_id>`
-  Adds a user to whitelist.
-- `/whitelist_remove group <group_id>`
-  Removes a group from whitelist.
-- `/whitelist_remove user <qq_id>`
-  Removes a user from whitelist.
-- `/rate_limit`
-  Shows the current rate limit config.
-- `/rate_limit_on`
+- `/添加白名单 群 <group_id>`
+  Adds a group to the whitelist.
+- `/添加白名单 用户 <qq_id>`
+  Adds a user to the whitelist.
+- `/移除白名单 群 <group_id>`
+  Removes a group from the whitelist.
+- `/移除白名单 用户 <qq_id>`
+  Removes a user from the whitelist.
+- `/限流`
+  Shows the current rate limit configuration.
+- `/开启限流`
   Enables rate limiting.
-- `/rate_limit_off`
+- `/关闭限流`
   Disables rate limiting.
-- `/rate_limit_set user|group|private <window_seconds> <max_requests> <block_seconds>`
+- `/设置限流 用户|群|私聊 <window_seconds> <max_requests> <block_seconds>`
   Updates rate limit settings.
 
 ## Installation
@@ -73,7 +79,8 @@ Field notes:
 - `HOST`: The bind address used by NanaBot.
 - `PORT`: The service port used by NoneBot.
 - `LOG_LEVEL`: The log verbosity level.
-- `COMMAND_START`: The command prefix list recognized by NoneBot. With `["/"]`, messages such as `/ping` and `/help` will be treated as commands.
+- `COMMAND_START`: The command prefix list recognized by NoneBot. With `["/"]`, messages such as `/ping` and `/帮助`
+  will be treated as commands.
 - `ONEBOT_ACCESS_TOKEN`: The shared access token used between NanaBot and NapCatQQ. It must match the token configured in NapCatQQ.
 - `SUPERUSERS`: QQ accounts allowed to use admin commands.
 
@@ -98,7 +105,7 @@ Config data is persisted in `data/config.json`:
 
 Rate limit behavior:
 
-- Whitelist check runs before rate limiting.
+- Whitelist checks run before rate limiting.
 - Only command messages are rate-limited.
 - Group messages apply both `user` and `group` scopes.
 - Private messages apply both `user` and `private` scopes.
@@ -119,16 +126,17 @@ python main.py
 
 After NapCatQQ is installed and running:
 
-1. Open NapCatQQ WebUI.
-2. Create a new `WebSocket Client` in network settings.
-3. Set the reverse WebSocket URL to:
+1. Open the NapCatQQ WebUI.
+2. Go to network settings.
+3. Create a new `WebSocket Client`.
+4. Set the reverse WebSocket URL to:
 
 ```text
 ws://127.0.0.1:8080/onebot/v11/ws
 ```
 
-4. Set the same token in both NapCatQQ and `.env`.
-5. Enable the connection and confirm it becomes connected.
+5. Set the same token in both NapCatQQ and `.env`.
+6. Enable the connection and confirm that it becomes connected.
 
 ## Contact
 

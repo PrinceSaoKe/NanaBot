@@ -13,36 +13,42 @@
 普通用户命令：
 
 - `/ping`
-  用于检测机器人是否在线，返回 `pong`
-- `/help`
-  查看当前可用命令
-- `/about`
-  查看娜娜 Bot 的简介
+  用于检测机器人是否在线，返回 `pong`。
+- `/帮助`
+  仅显示当前用户有权限执行的命令。
+- `/关于`
+  查看娜娜 Bot 的简介。
+- `/猜成语`
+  开启一局汉兜游戏。
+- `/提示`
+  查看当前汉兜游戏提示。
+- `/结束`
+  结束当前汉兜游戏。
 
 管理员命令（仅超管）：
 
-- `/whitelist`
-  查看群白名单和用户白名单
-- `/whitelist_add group <群号>`
-  将群加入白名单
-- `/whitelist_add user <QQ号>`
-  将用户加入白名单
-- `/whitelist_remove group <群号>`
-  将群移出白名单
-- `/whitelist_remove user <QQ号>`
-  将用户移出白名单
-- `/rate_limit`
-  查看当前限流配置
-- `/rate_limit_on`
-  开启限流
-- `/rate_limit_off`
-  关闭限流
-- `/rate_limit_set user|group|private <窗口秒数> <最大次数> <封禁秒数>`
-  更新限流参数
+- `/白名单`
+  查看群白名单和用户白名单。
+- `/添加白名单 群 <群号>`
+  添加群白名单。
+- `/添加白名单 用户 <QQ号>`
+  添加用户白名单。
+- `/移除白名单 群 <群号>`
+  移除群白名单。
+- `/移除白名单 用户 <QQ号>`
+  移除用户白名单。
+- `/限流`
+  查看当前限流配置。
+- `/开启限流`
+  开启限流。
+- `/关闭限流`
+  关闭限流。
+- `/设置限流 用户|群|私聊 <窗口秒数> <最大次数> <封禁秒数>`
+  更新限流参数。
 
 ## 安装依赖
 
-1. 创建或激活虚拟环境
+1. 创建或激活虚拟环境。
 2. 通过依赖文件统一安装：
 
 ```powershell
@@ -69,10 +75,10 @@ SUPERUSERS=["你的QQ号"]
 
 字段含义：
 
-- `HOST`：NanaBot 监听地址
-- `PORT`：NoneBot 服务端口
-- `LOG_LEVEL`：日志级别
-- `COMMAND_START`：NoneBot 识别命令时使用的前缀列表。当前配置为 `["/"]`，像 `/ping`、`/help` 会被识别为命令。
+- `HOST`：NanaBot 监听地址。
+- `PORT`：NoneBot 服务端口。
+- `LOG_LEVEL`：日志级别。
+- `COMMAND_START`：NoneBot 识别命令时使用的前缀列表。当前配置为 `["/"]`，像 `/ping`、`/帮助` 会被识别为命令。
 - `ONEBOT_ACCESS_TOKEN`：NanaBot 与 NapCatQQ 之间共用的访问令牌，必须和 NapCatQQ 中配置的 Token 完全一致。
 - `SUPERUSERS`：允许使用管理员命令的 QQ 账号列表。
 
@@ -97,11 +103,11 @@ SUPERUSERS=["你的QQ号"]
 
 限流规则：
 
-- 先执行白名单检查，再执行限流检查
-- 仅对命令消息做限流
-- 群聊同时应用 `user` 和 `group` 两个维度
-- 私聊同时应用 `user` 和 `private` 两个维度
-- 超管执行安全管理命令时豁免限流，避免把机器人锁死
+- 先执行白名单检查，再执行限流检查。
+- 仅对命令消息做限流。
+- 群聊同时应用 `user` 和 `group` 两个维度。
+- 私聊同时应用 `user` 和 `private` 两个维度。
+- 超管执行安全管理命令时豁免限流，避免把机器人锁死。
 
 ## 启动 NanaBot
 
@@ -118,17 +124,17 @@ python main.py
 
 安装并启动 NapCatQQ 后：
 
-1. 打开 NapCatQQ WebUI
-2. 进入网络配置
-3. 新建一个 `WebSocket Client`
+1. 打开 NapCatQQ WebUI。
+2. 进入网络配置。
+3. 新建一个 `WebSocket Client`。
 4. 将反向 WebSocket 地址设置为：
 
 ```text
 ws://127.0.0.1:8080/onebot/v11/ws
 ```
 
-5. 在 NapCatQQ 和 `.env` 中配置相同的 Token
-6. 启用连接，并确认状态变为已连接
+5. 在 NapCatQQ 和 `.env` 中配置相同的 Token。
+6. 启用连接，并确认状态变为已连接。
 
 ## 联系方式
 

@@ -1,33 +1,33 @@
 from nonebot import on_command
+from nonebot.adapters.onebot.v11 import MessageEvent
 
+from services.auth import is_superuser
+from services.command_registry import get_visible_commands
 
-help_cmd = on_command("help", priority=10, block=True)
-about = on_command("about", priority=10, block=True)
+help_cmd = on_command("帮助", aliases={"help"}, priority=10, block=True)
+about = on_command("关于", aliases={"about"}, priority=10, block=True)
 
 
 @help_cmd.handle()
-async def handle_help() -> None:
-    await help_cmd.finish(
-        "娜娜 Bot 可用命令：\n"
-        "普通用户命令：\n"
-        "/ping - 连通性测试\n"
-        "/help - 查看命令列表\n"
-        "/about - 查看机器人简介\n"
-        "管理员命令（仅超管）：\n"
-        "/whitelist - 查看白名单（仅超管）\n"
-        "/whitelist_add group <群号> - 加群白名单（仅超管）\n"
-        "/whitelist_add user <QQ号> - 加用户白名单（仅超管）\n"
-        "/whitelist_remove group <群号> - 移除群白名单（仅超管）\n"
-        "/whitelist_remove user <QQ号> - 移除用户白名单（仅超管）\n"
-        "/rate_limit - 查看限流配置（仅超管）\n"
-        "/rate_limit_on - 开启限流（仅超管）\n"
-        "/rate_limit_off - 关闭限流（仅超管）\n"
-        "/rate_limit_set user|group|private <窗口秒数> <最大次数> <冷却秒数> - 更新限流（仅超管）"
-    )
+async def handle_help(event: MessageEvent) -> None:
+    """
+    根据当前用户权限展示可执行命令。
+
+    参数：
+    - event: 当前消息事件，用于识别发起命令的用户。
+    """
+    visible_commands = get_visible_commands(is_superuser(event.get_user_id()))
+    lines = ["娜娜 Bot 可用命令："]
+    for item in visible_commands:
+        lines.append(f"{item.command} - {item.description}")
+    await help_cmd.finish("\n".join(lines))
 
 
 @about.handle()
 async def handle_about() -> None:
+    """
+    返回机器人简介。
+    """
     await about.finish(
         "娜娜 Bot 是一个基于 NapCatQQ、NoneBot2 和 OneBot V11 的 QQ 机器人。\n"
         "开发者：骚客\n"

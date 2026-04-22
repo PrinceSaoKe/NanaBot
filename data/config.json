@@ -1,6 +1,10 @@
 {
   "group_whitelist": [],
-  "user_whitelist": [],
+  "user_whitelist": [
+    "2263373457",
+    "2596818595",
+    "896995800"
+  ],
   "rate_limit": {
     "enabled": true,
     "user_window_seconds": 10,
