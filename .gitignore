@@ -40,4 +40,5 @@ Thumbs.db
 *.log
 
 # 项目笔记
+data/nanabot.db
 note/

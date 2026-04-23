@@ -25,7 +25,7 @@ Regular user commands:
 - `/查看菜单 菜品|饮品`
   Shows all menu items for the given type.
 - `/猜成语`
-  Starts one handle game.
+  Sends the handle rule image first, then starts one handle game.
 - `/提示`
   Shows one hint for the current handle game.
 - `/结束`
@@ -97,7 +97,7 @@ Field notes:
 - `ONEBOT_ACCESS_TOKEN`: The shared access token used between NanaBot and NapCatQQ. It must match the token configured in NapCatQQ.
 - `SUPERUSERS`: QQ accounts allowed to use admin commands.
 
-Config data is persisted in `data/config.json`:
+Config data is split across JSON and SQLite:
 
 ```json
 {
@@ -115,6 +115,11 @@ Config data is persisted in `data/config.json`:
   }
 }
 ```
+
+- `data/config.json`: Stores rate limit configuration.
+- `data/nanabot.db`: Stores group and user whitelist data.
+- On first startup after this change, legacy whitelist entries in `data/config.json` will be migrated automatically into
+  SQLite.
 
 Rate limit behavior:
 

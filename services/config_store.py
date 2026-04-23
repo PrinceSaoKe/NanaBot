@@ -2,6 +2,14 @@ import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
+from services.whitelist_store import (
+    add_whitelist_entry,
+    initialize_whitelist_store,
+    is_allowed,
+    list_whitelist,
+    remove_whitelist_entry,
+)
+
 
 @dataclass
 class RateLimitConfig:
@@ -108,6 +116,7 @@ def _ensure_config_file() -> None:
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     if not CONFIG_PATH.exists():
         save_config(BotConfig())
+    initialize_whitelist_store()
 
 
 def load_config() -> BotConfig:
@@ -120,8 +129,8 @@ def load_config() -> BotConfig:
     _ensure_config_file()
     raw = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     return BotConfig(
-        group_whitelist=_normalize_ids(raw.get("group_whitelist")),
-        user_whitelist=_normalize_ids(raw.get("user_whitelist")),
+        group_whitelist=list_whitelist("group"),
+        user_whitelist=list_whitelist("user"),
         rate_limit=_parse_rate_limit_config(raw.get("rate_limit")),
     )
 
@@ -138,8 +147,8 @@ def save_config(config: BotConfig) -> None:
     """
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     normalized = BotConfig(
-        group_whitelist=_normalize_ids(config.group_whitelist),
-        user_whitelist=_normalize_ids(config.user_whitelist),
+        group_whitelist=[],
+        user_whitelist=[],
         rate_limit=_parse_rate_limit_config(asdict(config.rate_limit)),
     )
     CONFIG_PATH.write_text(
@@ -225,7 +234,7 @@ def is_group_allowed(group_id: int | str) -> bool:
     返回：
     - `True` 表示允许，`False` 表示不允许。
     """
-    return str(group_id) in load_config().group_whitelist
+    return is_allowed("group", group_id)
 
 
 def is_user_allowed(user_id: int | str) -> bool:
@@ -238,7 +247,7 @@ def is_user_allowed(user_id: int | str) -> bool:
     返回：
     - `True` 表示允许，`False` 表示不允许。
     """
-    return str(user_id) in load_config().user_whitelist
+    return is_allowed("user", user_id)
 
 
 def add_to_whitelist(target_type: str, target_id: int | str) -> bool:
@@ -258,22 +267,7 @@ def add_to_whitelist(target_type: str, target_id: int | str) -> bool:
     异常：
     - `ValueError`：`target_type` 不是 `group` 或 `user`。
     """
-    config = load_config()
-    normalized_id = str(target_id).strip()
-
-    if target_type == "group":
-        if normalized_id in config.group_whitelist:
-            return False
-        config.group_whitelist.append(normalized_id)
-    elif target_type == "user":
-        if normalized_id in config.user_whitelist:
-            return False
-        config.user_whitelist.append(normalized_id)
-    else:
-        raise ValueError(f"Unsupported whitelist target type: {target_type}")
-
-    save_config(config)
-    return True
+    return add_whitelist_entry(target_type, target_id)
 
 
 def remove_from_whitelist(target_type: str, target_id: int | str) -> bool:
@@ -293,19 +287,4 @@ def remove_from_whitelist(target_type: str, target_id: int | str) -> bool:
     异常：
     - `ValueError`：`target_type` 不是 `group` 或 `user`。
     """
-    config = load_config()
-    normalized_id = str(target_id).strip()
-
-    if target_type == "group":
-        if normalized_id not in config.group_whitelist:
-            return False
-        config.group_whitelist.remove(normalized_id)
-    elif target_type == "user":
-        if normalized_id not in config.user_whitelist:
-            return False
-        config.user_whitelist.remove(normalized_id)
-    else:
-        raise ValueError(f"Unsupported whitelist target type: {target_type}")
-
-    save_config(config)
-    return True
+    return remove_whitelist_entry(target_type, target_id)

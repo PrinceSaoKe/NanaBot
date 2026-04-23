@@ -25,7 +25,7 @@
 - `/查看菜单 菜品|饮品`
   查看对应类型的全部菜单。
 - `/猜成语`
-  开启一局汉兜游戏。
+  先发送汉兜规则图，再开启一局汉兜游戏。
 - `/提示`
   查看当前汉兜游戏提示。
 - `/结束`
@@ -94,7 +94,7 @@ SUPERUSERS=["你的QQ号"]
 - `ONEBOT_ACCESS_TOKEN`：NanaBot 与 NapCatQQ 之间共用的访问令牌，必须和 NapCatQQ 中配置的 Token 完全一致。
 - `SUPERUSERS`：允许使用管理员命令的 QQ 账号列表。
 
-配置数据存储在 `data/config.json`：
+配置数据分别存储在 JSON 与 SQLite 中：
 
 ```json
 {
@@ -112,6 +112,10 @@ SUPERUSERS=["你的QQ号"]
   }
 }
 ```
+
+- `data/config.json`：保存限流配置。
+- `data/nanabot.db`：保存群白名单和用户白名单。
+- 首次升级到该版本后，旧 `data/config.json` 中的白名单数据会自动迁移到 SQLite。
 
 限流规则：
 

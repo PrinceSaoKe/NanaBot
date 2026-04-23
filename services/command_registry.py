@@ -22,7 +22,7 @@ COMMAND_REGISTRY: list[CommandInfo] = [
     CommandInfo("/今天吃什么", "随机推荐今天吃什么"),
     CommandInfo("/今天喝什么", "随机推荐今天喝什么"),
     CommandInfo("/查看菜单 菜品|饮品", "查看对应类型的全部菜单"),
-    CommandInfo("/猜成语", "开启一局汉兜游戏"),
+    CommandInfo("/猜成语", "发送规则图并开启一局汉兜游戏"),
     CommandInfo("/提示", "查看当前汉兜游戏提示"),
     CommandInfo("/结束", "结束当前汉兜游戏"),
     CommandInfo("/添加菜单 <名称> 菜品|饮品 <图片>", "添加菜单图片", admin_only=True),
