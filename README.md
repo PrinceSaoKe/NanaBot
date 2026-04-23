@@ -24,6 +24,14 @@ Regular user commands:
   Randomly recommends something to drink today.
 - `/查看菜单 菜品|饮品`
   Shows all menu items for the given type.
+- `/猜单词`
+  Starts one wordle game.
+- `/猜单词 -l <3~8>`
+  Starts one wordle game with a custom word length.
+- `/提示`
+  Shows one hint for the current wordle game.
+- `/结束`
+  Ends the current wordle game.
 - `/猜成语`
   Sends the handle rule image first, then starts one handle game.
 - `/提示`
