@@ -8,6 +8,7 @@ dependencies = [
     "nonebot2[fastapi]<3.0.0,>=2.4.3",
     "nonebot-adapter-onebot<3.0.0,>=2.4.6",
     "httpx>=0.27.0,<1.0.0",
+    "PyYAML>=6.0.0,<7.0.0",
     "nonebot_plugin_handle>=0.4.4",
     "nonebot-plugin-whateat-pic>=1.5.7",
     "nonebot_plugin_wordle>=0.4.5",

@@ -112,33 +112,33 @@ DEEPSEEK_TIMEOUT_SECONDS=60
 - `DEEPSEEK_MODEL`：调用的 DeepSeek 模型名称，默认 `deepseek-chat`。
 - `DEEPSEEK_TIMEOUT_SECONDS`：DeepSeek 请求超时秒数，必须大于 `0`，默认 `60`。
 
-配置数据分别存储在 JSON 与 SQLite 中：
+配置数据分别存储在 YAML 与 SQLite 中：
 
-```json
-{
-  "group_whitelist": [],
-  "user_whitelist": [],
-  "rate_limit": {
-    "enabled": true,
-    "user_window_seconds": 10,
-    "user_max_requests": 5,
-    "group_window_seconds": 10,
-    "group_max_requests": 15,
-    "private_window_seconds": 10,
-    "private_max_requests": 5,
-    "block_seconds": 30
-  },
-  "deepseek_chat": {
-    "system_prompt": "你是一个QQ用户，名字叫{bot_name}。回答要像真人聊天，简短、直接、自然。默认用1到3句短句回答，除非用户明确要求详细。不要使用Markdown标题、列表或长段落。",
-    "max_tokens": 180,
-    "max_context_messages": 20
-  }
-}
+```yaml
+# NanaBot 配置文件
+group_whitelist: []
+user_whitelist: []
+
+rate_limit:
+  enabled: true
+  user_window_seconds: 10
+  user_max_requests: 5
+  group_window_seconds: 10
+  group_max_requests: 15
+  private_window_seconds: 10
+  private_max_requests: 5
+  block_seconds: 30
+
+deepseek_chat:
+  system_prompt: 你是一个QQ用户，名字叫{bot_name}。回答要像真人聊天，简短、直接、自然。默认用1到3句短句回答，除非用户明确要求详细。不要使用Markdown标题、列表或长段落。
+  max_tokens: 180
+  max_context_messages: 20
 ```
 
-- `data/config.json`：保存限流配置与 DeepSeek 聊天行为配置。
+- `data/config.yml`：保存限流配置与 DeepSeek 聊天行为配置，支持注释。
 - `data/nanabot.db`：保存群白名单和用户白名单。
-- 首次升级到该版本后，旧 `data/config.json` 中的白名单数据会自动迁移到 SQLite。
+- 首次升级到该版本后，旧 `data/config.json` 会自动迁移为 `data/config.yml`，其中旧 JSON 里的白名单数据也会自动迁移到
+  SQLite。
 
 `deepseek_chat` 字段含义：
 

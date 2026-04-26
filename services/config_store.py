@@ -2,6 +2,8 @@ import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
+import yaml
+
 from services.whitelist_store import (
     add_whitelist_entry,
     initialize_whitelist_store,
@@ -68,7 +70,8 @@ class BotConfig:
 
 
 CONFIG_DIR = Path("data")
-CONFIG_PATH = CONFIG_DIR / "config.json"
+CONFIG_PATH = CONFIG_DIR / "config.yml"
+LEGACY_CONFIG_PATH = CONFIG_DIR / "config.json"
 
 
 def _normalize_ids(values: list[str] | None) -> list[str]:
@@ -102,6 +105,42 @@ def _normalize_positive_int(value: int | str | None, default: int) -> int:
     except (TypeError, ValueError):
         return default
     return parsed if parsed > 0 else default
+
+
+def _indent_text(text: str, spaces: int) -> str:
+    """
+    为多行文本统一增加缩进。
+
+    参数：
+    - text: 原始文本。
+    - spaces: 左侧缩进空格数，必须大于等于 `0`。
+
+    返回：
+    - 增加缩进后的文本。
+    """
+    prefix = " " * max(0, spaces)
+    return "\n".join(f"{prefix}{line}" if line else line for line in text.splitlines())
+
+
+def _render_yaml_entry(key: str, value: object, indent: int = 0) -> str:
+    """
+    将单个键值对渲染为 YAML 片段。
+
+    参数：
+    - key: 配置键名。
+    - value: 配置值，允许任意可被 YAML 序列化的对象。
+    - indent: 片段整体左侧缩进空格数，必须大于等于 `0`。
+
+    返回：
+    - YAML 片段文本。
+    """
+    rendered = yaml.safe_dump(
+        {key: value},
+        allow_unicode=True,
+        sort_keys=False,
+        width=4096,
+    ).rstrip()
+    return _indent_text(rendered, indent)
 
 
 def _parse_rate_limit_config(raw: dict | None) -> RateLimitConfig:
@@ -153,15 +192,105 @@ def _parse_deepseek_chat_config(raw: dict | None) -> DeepSeekChatConfig:
     )
 
 
+def _load_yaml_config() -> dict:
+    """
+    读取当前 YAML 配置文件内容。
+
+    返回：
+    - 解析后的配置字典；若文件为空或结构非法，则返回空字典。
+    """
+    if not CONFIG_PATH.exists():
+        return {}
+
+    raw = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    return raw if isinstance(raw, dict) else {}
+
+
+def _render_config_yaml(config: BotConfig) -> str:
+    """
+    将配置对象渲染为带注释的 YAML 文本。
+
+    参数：
+    - config: 已标准化的配置对象。
+
+    返回：
+    - 可直接写入 `data/config.yml` 的 YAML 文本。
+    """
+    sections = [
+        "# NanaBot 配置文件",
+        "# 说明：群白名单与用户白名单已迁移到 SQLite，这里默认保留空列表仅用于兼容旧结构。",
+        _render_yaml_entry("group_whitelist", config.group_whitelist),
+        _render_yaml_entry("user_whitelist", config.user_whitelist),
+        "",
+        "# 限流配置",
+        "rate_limit:",
+        "  # 是否启用限流",
+        f"  enabled: {str(config.rate_limit.enabled).lower()}",
+        "  # 用户维度限流窗口（秒）",
+        f"  user_window_seconds: {config.rate_limit.user_window_seconds}",
+        "  # 用户维度窗口内最大请求次数",
+        f"  user_max_requests: {config.rate_limit.user_max_requests}",
+        "  # 群维度限流窗口（秒）",
+        f"  group_window_seconds: {config.rate_limit.group_window_seconds}",
+        "  # 群维度窗口内最大请求次数",
+        f"  group_max_requests: {config.rate_limit.group_max_requests}",
+        "  # 私聊维度限流窗口（秒）",
+        f"  private_window_seconds: {config.rate_limit.private_window_seconds}",
+        "  # 私聊维度窗口内最大请求次数",
+        f"  private_max_requests: {config.rate_limit.private_max_requests}",
+        "  # 触发限流后的封禁秒数",
+        f"  block_seconds: {config.rate_limit.block_seconds}",
+        "",
+        "# DeepSeek 聊天配置",
+        "deepseek_chat:",
+        "  # 系统提示词模板，支持使用 {bot_name} 占位符注入机器人昵称",
+        _render_yaml_entry("system_prompt", config.deepseek_chat.system_prompt, indent=2),
+        "  # 单次回复允许的最大 token 数",
+        f"  max_tokens: {config.deepseek_chat.max_tokens}",
+        "  # 每个会话最多保留的上下文消息条数",
+        f"  max_context_messages: {config.deepseek_chat.max_context_messages}",
+    ]
+    return "\n".join(sections).rstrip() + "\n"
+
+
+def _migrate_legacy_json_config() -> None:
+    """
+    将旧版 `data/config.json` 迁移为 `data/config.yml`。
+
+    说明：
+    - 仅迁移当前仍由配置文件维护的字段。
+    - 白名单仍由 `whitelist_store` 负责从旧 JSON 中迁移到 SQLite。
+    """
+    if not LEGACY_CONFIG_PATH.exists():
+        save_config(BotConfig())
+        return
+
+    raw = json.loads(LEGACY_CONFIG_PATH.read_text(encoding="utf-8"))
+    if not isinstance(raw, dict):
+        save_config(BotConfig())
+        return
+
+    save_config(
+        BotConfig(
+            group_whitelist=[],
+            user_whitelist=[],
+            rate_limit=_parse_rate_limit_config(raw.get("rate_limit")),
+            deepseek_chat=_parse_deepseek_chat_config(raw.get("deepseek_chat")),
+        )
+    )
+
+
 def _ensure_config_file() -> None:
     """
     确保配置目录和配置文件存在。
 
-    当 `data/config.json` 不存在时，会自动创建并写入默认配置结构。
+    规则：
+    - 若 `data/config.yml` 不存在且旧 `data/config.json` 存在，则自动迁移为 YAML。
+    - 若两者都不存在，则自动创建默认 YAML 配置。
     """
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     if not CONFIG_PATH.exists():
-        save_config(BotConfig())
+        _migrate_legacy_json_config()
     initialize_whitelist_store()
 
 
@@ -173,7 +302,7 @@ def load_config() -> BotConfig:
     - `BotConfig`：已标准化后的完整配置。
     """
     _ensure_config_file()
-    raw = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    raw = _load_yaml_config()
     return BotConfig(
         group_whitelist=list_whitelist("group"),
         user_whitelist=list_whitelist("user"),
@@ -184,7 +313,7 @@ def load_config() -> BotConfig:
 
 def save_config(config: BotConfig) -> None:
     """
-    保存配置到 `data/config.json`。
+    保存配置到 `data/config.yml`。
 
     参数：
     - config: 待保存的配置对象。
@@ -199,10 +328,7 @@ def save_config(config: BotConfig) -> None:
         rate_limit=_parse_rate_limit_config(asdict(config.rate_limit)),
         deepseek_chat=_parse_deepseek_chat_config(asdict(config.deepseek_chat)),
     )
-    CONFIG_PATH.write_text(
-        json.dumps(asdict(normalized), ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    CONFIG_PATH.write_text(_render_config_yaml(normalized), encoding="utf-8")
 
 
 def get_rate_limit_config() -> RateLimitConfig:

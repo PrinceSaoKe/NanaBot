@@ -3,7 +3,7 @@ from pathlib import Path
 
 from services.database import get_connection, initialize_database
 
-CONFIG_PATH = Path("data") / "config.json"
+LEGACY_CONFIG_PATH = Path("data") / "config.json"
 
 
 def _normalize_target_id(target_id: int | str) -> str:
@@ -45,10 +45,10 @@ def _read_legacy_whitelist() -> tuple[list[str], list[str]]:
     返回：
     - `(group_whitelist, user_whitelist)`，均为去重后的字符串列表。
     """
-    if not CONFIG_PATH.exists():
+    if not LEGACY_CONFIG_PATH.exists():
         return [], []
 
-    raw = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    raw = json.loads(LEGACY_CONFIG_PATH.read_text(encoding="utf-8"))
     groups = sorted({str(item).strip() for item in raw.get("group_whitelist", []) if str(item).strip()})
     users = sorted({str(item).strip() for item in raw.get("user_whitelist", []) if str(item).strip()})
     return groups, users
@@ -62,13 +62,13 @@ def _clear_legacy_whitelist() -> None:
     - 仅清空 `group_whitelist` 与 `user_whitelist`。
     - 其他配置，例如限流配置，保持不变。
     """
-    if not CONFIG_PATH.exists():
+    if not LEGACY_CONFIG_PATH.exists():
         return
 
-    raw = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    raw = json.loads(LEGACY_CONFIG_PATH.read_text(encoding="utf-8"))
     raw["group_whitelist"] = []
     raw["user_whitelist"] = []
-    CONFIG_PATH.write_text(json.dumps(raw, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    LEGACY_CONFIG_PATH.write_text(json.dumps(raw, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def initialize_whitelist_store() -> None:
@@ -78,7 +78,7 @@ def initialize_whitelist_store() -> None:
     说明：
     - 先确保数据库与白名单表存在。
     - 若数据库白名单为空，则尝试从 `data/config.json` 迁移旧白名单数据。
-    - 迁移成功后会清空 JSON 中的白名单字段，避免双写混乱。
+    - 迁移成功后会清空旧 JSON 中的白名单字段，避免双写混乱。
     """
     initialize_database()
 
