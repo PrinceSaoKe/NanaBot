@@ -24,6 +24,7 @@ COMMAND_REGISTRY: list[CommandInfo] = [
     CommandInfo("/查看菜单 菜品|饮品", "查看对应类型的全部菜单"),
     CommandInfo("/猜单词 -l <3~8>", "使用指定单词长度开启一局 wordle 游戏"),
     CommandInfo("/猜成语", "发送规则图并开启一局汉兜游戏"),
+    CommandInfo("@机器人 <内容>", "将 @ 后文本发送给 DeepSeek"),
     CommandInfo("/提示", "查看当前游戏提示"),
     CommandInfo("/结束", "结束当前游戏"),
     CommandInfo("/添加菜单 <名称> 菜品|饮品 <图片>", "添加菜单图片", admin_only=True),

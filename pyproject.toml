@@ -7,9 +7,11 @@ requires-python = ">=3.11,<3.12"
 dependencies = [
     "nonebot2[fastapi]<3.0.0,>=2.4.3",
     "nonebot-adapter-onebot<3.0.0,>=2.4.6",
+    "httpx>=0.27.0,<1.0.0",
     "nonebot_plugin_handle>=0.4.4",
     "nonebot-plugin-whateat-pic>=1.5.7",
     "nonebot_plugin_wordle>=0.4.5",
+    "nonebot-plugin-steam-info>=1.3.5",
 ]
 
 [build-system]
@@ -20,3 +22,4 @@ build-backend = "setuptools.build_meta"
 nonebot_plugin_handle = ["nonebot_plugin_handle"]
 nonebot-plugin-whateat-pic = ["nonebot_plugin_whateat_pic"]
 nonebot_plugin_wordle = ["nonebot_plugin_wordle"]
+nonebot-plugin-steam-info = ["nonebot_plugin_steam_info"]

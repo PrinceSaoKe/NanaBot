@@ -34,6 +34,8 @@
   结束当前 wordle 游戏。
 - `/猜成语`
   先发送汉兜规则图，再开启一局汉兜游戏。
+- `@机器人 <内容>`
+  将 `@` 后的文本发送给 DeepSeek，并返回模型回复。
 - `/提示`
   查看当前汉兜游戏提示。
 - `/结束`
@@ -90,6 +92,10 @@ COMMAND_START=["/"]
 NICKNAME=["Bot名字"]
 ONEBOT_ACCESS_TOKEN=replace-with-your-token
 SUPERUSERS=["你的QQ号"]
+DEEPSEEK_API_KEY=replace-with-your-deepseek-api-key
+DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
+DEEPSEEK_MODEL=deepseek-chat
+DEEPSEEK_TIMEOUT_SECONDS=60
 ```
 
 字段含义：
@@ -101,6 +107,10 @@ SUPERUSERS=["你的QQ号"]
 - `NICKNAME`：NoneBot 使用的机器人昵称列表。`nonebot_plugin_whateat_pic` 这类插件会取第一个昵称作为回复中显示的机器人名字。
 - `ONEBOT_ACCESS_TOKEN`：NanaBot 与 NapCatQQ 之间共用的访问令牌，必须和 NapCatQQ 中配置的 Token 完全一致。
 - `SUPERUSERS`：允许使用管理员命令的 QQ 账号列表。
+- `DEEPSEEK_API_KEY`：DeepSeek 的 API Key，未配置时 `@机器人` 对话功能不可用。
+- `DEEPSEEK_BASE_URL`：DeepSeek API 基础地址，默认 `https://api.deepseek.com/v1`。
+- `DEEPSEEK_MODEL`：调用的 DeepSeek 模型名称，默认 `deepseek-chat`。
+- `DEEPSEEK_TIMEOUT_SECONDS`：DeepSeek 请求超时秒数，必须大于 `0`，默认 `60`。
 
 配置数据分别存储在 JSON 与 SQLite 中：
 

@@ -34,6 +34,8 @@ Regular user commands:
   Ends the current wordle game.
 - `/猜成语`
   Sends the handle rule image first, then starts one handle game.
+- `@BotName <content>`
+  Sends the text after `@` to DeepSeek and returns the model reply.
 - `/提示`
   Shows one hint for the current handle game.
 - `/结束`
@@ -91,6 +93,10 @@ COMMAND_START=["/"]
 NICKNAME=["BotName"]
 ONEBOT_ACCESS_TOKEN=replace-with-your-token
 SUPERUSERS=["your-qq-number"]
+DEEPSEEK_API_KEY=replace-with-your-deepseek-api-key
+DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
+DEEPSEEK_MODEL=deepseek-chat
+DEEPSEEK_TIMEOUT_SECONDS=60
 ```
 
 Field notes:
@@ -104,6 +110,10 @@ Field notes:
   nickname as the bot name shown in replies.
 - `ONEBOT_ACCESS_TOKEN`: The shared access token used between NanaBot and NapCatQQ. It must match the token configured in NapCatQQ.
 - `SUPERUSERS`: QQ accounts allowed to use admin commands.
+- `DEEPSEEK_API_KEY`: DeepSeek API key. If missing, the `@BotName` chat feature is unavailable.
+- `DEEPSEEK_BASE_URL`: DeepSeek API base URL. Default: `https://api.deepseek.com/v1`.
+- `DEEPSEEK_MODEL`: DeepSeek model name used for chat. Default: `deepseek-chat`.
+- `DEEPSEEK_TIMEOUT_SECONDS`: Request timeout for DeepSeek in seconds. Must be greater than `0`. Default: `60`.
 
 Config data is split across JSON and SQLite:
 
