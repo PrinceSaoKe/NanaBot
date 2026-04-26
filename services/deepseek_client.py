@@ -1,6 +1,15 @@
 import httpx
 from nonebot import get_driver
 
+from services.bot_profile import get_bot_nicknames
+
+DEEPSEEK_CHAT_SYSTEM_PROMPT = (
+        "你是一个QQ用户，名字叫" + get_bot_nicknames()[0] + "。"
+                                                           "回答要像真人聊天，简短、直接、自然。"
+                                                           "默认用1到3句短句回答，除非用户明确要求详细。"
+                                                           "不要使用Markdown标题、列表或长段落。"
+)
+
 
 def _get_deepseek_settings() -> tuple[str, str, str, float]:
     """
@@ -15,8 +24,8 @@ def _get_deepseek_settings() -> tuple[str, str, str, float]:
     """
     config = get_driver().config
     api_key = str(getattr(config, "deepseek_api_key", "") or "").strip()
-    base_url = str(getattr(config, "deepseek_base_url", "https://api.deepseek.com/v1") or "").strip()
-    model = str(getattr(config, "deepseek_model", "deepseek-chat") or "").strip()
+    base_url = str(getattr(config, "deepseek_base_url", "https://api.deepseek.com") or "").strip()
+    model = str(getattr(config, "deepseek_model", "deepseek-v4-flash") or "").strip()
     timeout_raw = getattr(config, "deepseek_timeout_seconds", 60)
 
     try:
@@ -47,7 +56,7 @@ async def chat_with_deepseek(prompt: str) -> str:
     """
     normalized_prompt = prompt.strip()
     if not normalized_prompt:
-        raise ValueError("问题内容不能为空。")
+        raise ValueError("你要问我什么？")
 
     api_key, base_url, model, timeout_seconds = _get_deepseek_settings()
     if not api_key:
@@ -56,7 +65,12 @@ async def chat_with_deepseek(prompt: str) -> str:
     url = f"{base_url.rstrip('/')}/chat/completions"
     payload = {
         "model": model,
-        "messages": [{"role": "user", "content": normalized_prompt}],
+        # 通过系统提示词约束回复风格，避免随口一问就输出大段说明。
+        "messages": [
+            {"role": "system", "content": DEEPSEEK_CHAT_SYSTEM_PROMPT},
+            {"role": "user", "content": normalized_prompt},
+        ],
+        "max_tokens": 180,
     }
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -70,10 +84,10 @@ async def chat_with_deepseek(prompt: str) -> str:
 
     choices = data.get("choices") if isinstance(data, dict) else None
     if not choices:
-        raise RuntimeError("DeepSeek 返回内容为空。")
+        raise RuntimeError(get_bot_nicknames()[0] + "不知道哦~")
 
     message = choices[0].get("message", {}) if isinstance(choices[0], dict) else {}
     content = str(message.get("content", "") or "").strip()
     if not content:
-        raise RuntimeError("DeepSeek 返回内容为空。")
+        raise RuntimeError(get_bot_nicknames()[0] + "不知道哦~")
     return content

@@ -35,7 +35,7 @@ Regular user commands:
 - `/猜成语`
   Sends the handle rule image first, then starts one handle game.
 - `@BotName <content>`
-  Sends the text after `@` to DeepSeek and returns the model reply.
+  Sends the text after `@` to DeepSeek and returns a short conversational reply (default 1-3 sentences).
 - `/提示`
   Shows one hint for the current handle game.
 - `/结束`

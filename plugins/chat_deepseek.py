@@ -60,7 +60,7 @@ async def handle_chat_with_ds(bot: Bot, event: MessageEvent) -> None:
     """
     prompt = _extract_prompt(bot, event)
     if not prompt:
-        await chat_with_ds.finish("请输入要发送给 DeepSeek 的内容。")
+        await chat_with_ds.finish("发送 /help 可以查看所有指令哦~")
 
     # 命令消息交给命令插件处理，避免与 `/帮助` 等指令冲突。
     if _is_command_message(prompt):
@@ -70,8 +70,9 @@ async def handle_chat_with_ds(bot: Bot, event: MessageEvent) -> None:
         answer = await chat_with_deepseek(prompt)
     except ValueError as error:
         await chat_with_ds.finish(f"DeepSeek 配置或参数错误：{error}")
-    except Exception:
+    except Exception as error:
         # 统一兜底异常，避免把堆栈暴露给群聊用户。
+        print(error)
         await chat_with_ds.finish("DeepSeek 请求失败，请稍后重试。")
 
     await chat_with_ds.finish(answer)
