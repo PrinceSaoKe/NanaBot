@@ -33,6 +33,26 @@ class RateLimitConfig:
     block_seconds: int = 30
 
 
+DEFAULT_DEEPSEEK_SYSTEM_PROMPT = (
+    "你是一个QQ用户，名字叫{bot_name}。"
+    "回答要像真人聊天，简短、直接、自然。"
+    "默认用1到3句短句回答，除非用户明确要求详细。"
+    "不要使用Markdown标题、列表或长段落。"
+)
+
+
+@dataclass
+class DeepSeekChatConfig:
+    """DeepSeek 聊天配置模型。"""
+
+    # DeepSeek 系统提示词模板，允许使用 `{bot_name}` 占位符。
+    system_prompt: str = DEFAULT_DEEPSEEK_SYSTEM_PROMPT
+    # 单次回复允许的最大 token 数。
+    max_tokens: int = 180
+    # 每个会话最多保留的上下文消息条数。
+    max_context_messages: int = 20
+
+
 @dataclass
 class BotConfig:
     """机器人配置模型。"""
@@ -43,6 +63,8 @@ class BotConfig:
     user_whitelist: list[str] = field(default_factory=list)
     # 限流配置。
     rate_limit: RateLimitConfig = field(default_factory=RateLimitConfig)
+    # DeepSeek 聊天配置。
+    deepseek_chat: DeepSeekChatConfig = field(default_factory=DeepSeekChatConfig)
 
 
 CONFIG_DIR = Path("data")
@@ -107,6 +129,30 @@ def _parse_rate_limit_config(raw: dict | None) -> RateLimitConfig:
     )
 
 
+def _parse_deepseek_chat_config(raw: dict | None) -> DeepSeekChatConfig:
+    """
+    从原始字典解析 DeepSeek 聊天配置。
+
+    参数：
+    - raw: 原始 DeepSeek 聊天配置字典，可为 `None`。
+
+    返回：
+    - 标准化后的 `DeepSeekChatConfig`。
+    """
+    if not isinstance(raw, dict):
+        return DeepSeekChatConfig()
+
+    system_prompt = str(raw.get("system_prompt", DEFAULT_DEEPSEEK_SYSTEM_PROMPT) or "").strip()
+    if not system_prompt:
+        system_prompt = DEFAULT_DEEPSEEK_SYSTEM_PROMPT
+
+    return DeepSeekChatConfig(
+        system_prompt=system_prompt,
+        max_tokens=_normalize_positive_int(raw.get("max_tokens"), 180),
+        max_context_messages=_normalize_positive_int(raw.get("max_context_messages"), 20),
+    )
+
+
 def _ensure_config_file() -> None:
     """
     确保配置目录和配置文件存在。
@@ -132,6 +178,7 @@ def load_config() -> BotConfig:
         group_whitelist=list_whitelist("group"),
         user_whitelist=list_whitelist("user"),
         rate_limit=_parse_rate_limit_config(raw.get("rate_limit")),
+        deepseek_chat=_parse_deepseek_chat_config(raw.get("deepseek_chat")),
     )
 
 
@@ -150,6 +197,7 @@ def save_config(config: BotConfig) -> None:
         group_whitelist=[],
         user_whitelist=[],
         rate_limit=_parse_rate_limit_config(asdict(config.rate_limit)),
+        deepseek_chat=_parse_deepseek_chat_config(asdict(config.deepseek_chat)),
     )
     CONFIG_PATH.write_text(
         json.dumps(asdict(normalized), ensure_ascii=False, indent=2) + "\n",
@@ -165,6 +213,16 @@ def get_rate_limit_config() -> RateLimitConfig:
     - `RateLimitConfig`：当前限流配置快照。
     """
     return load_config().rate_limit
+
+
+def get_deepseek_chat_config() -> DeepSeekChatConfig:
+    """
+    获取当前 DeepSeek 聊天配置。
+
+    返回：
+    - `DeepSeekChatConfig`：当前 DeepSeek 聊天配置快照。
+    """
+    return load_config().deepseek_chat
 
 
 def set_rate_limit_enabled(enabled: bool) -> None:

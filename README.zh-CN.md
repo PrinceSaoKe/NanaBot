@@ -35,7 +35,7 @@
 - `/猜成语`
   先发送汉兜规则图，再开启一局汉兜游戏。
 - `@机器人 <内容>`
-  将 `@` 后的文本发送给 DeepSeek，并返回简短口语化回复（默认 1~3 句）。
+  将 `@` 后的文本发送给 DeepSeek，并返回简短口语化回复（默认 1~3 句）；群聊与私聊分别维护独立上下文记忆。
 - `/提示`
   查看当前汉兜游戏提示。
 - `/结束`
@@ -127,13 +127,24 @@ DEEPSEEK_TIMEOUT_SECONDS=60
     "private_window_seconds": 10,
     "private_max_requests": 5,
     "block_seconds": 30
+  },
+  "deepseek_chat": {
+    "system_prompt": "你是一个QQ用户，名字叫{bot_name}。回答要像真人聊天，简短、直接、自然。默认用1到3句短句回答，除非用户明确要求详细。不要使用Markdown标题、列表或长段落。",
+    "max_tokens": 180,
+    "max_context_messages": 20
   }
 }
 ```
 
-- `data/config.json`：保存限流配置。
+- `data/config.json`：保存限流配置与 DeepSeek 聊天行为配置。
 - `data/nanabot.db`：保存群白名单和用户白名单。
 - 首次升级到该版本后，旧 `data/config.json` 中的白名单数据会自动迁移到 SQLite。
+
+`deepseek_chat` 字段含义：
+
+- `system_prompt`：DeepSeek 系统提示词模板，允许使用 `{bot_name}` 占位符自动注入机器人昵称。
+- `max_tokens`：单次 DeepSeek 回复允许的最大 token 数，必须大于 `0`。
+- `max_context_messages`：每个群聊或私聊会话最多保留的上下文消息条数，必须大于 `0`。
 
 限流规则：
 

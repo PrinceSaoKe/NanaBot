@@ -1,7 +1,8 @@
 from nonebot import get_driver, on_message
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageEvent
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageEvent, PrivateMessageEvent
 from nonebot.rule import to_me
 
+from services.chat_memory import chat_memory_store
 from services.deepseek_client import chat_with_deepseek
 
 chat_with_ds = on_message(rule=to_me(), priority=20, block=False)
@@ -49,6 +50,25 @@ def _extract_prompt(bot: Bot, event: MessageEvent) -> str:
     return Message(filtered_segments).extract_plain_text().strip()
 
 
+def _get_session_id(event: MessageEvent) -> str:
+    """
+    生成会话 ID，用于隔离上下文记忆。
+
+    参数：
+    - event: 当前消息事件，仅处理群聊与私聊事件。
+
+    返回：
+    - 群聊返回 `group:<group_id>`。
+    - 私聊返回 `private:<user_id>`。
+    - 其他类型事件返回 `private:<user_id>` 兜底。
+    """
+    if isinstance(event, GroupMessageEvent):
+        return f"group:{event.group_id}"
+    if isinstance(event, PrivateMessageEvent):
+        return f"private:{event.get_user_id()}"
+    return f"private:{event.get_user_id()}"
+
+
 @chat_with_ds.handle()
 async def handle_chat_with_ds(bot: Bot, event: MessageEvent) -> None:
     """
@@ -66,8 +86,13 @@ async def handle_chat_with_ds(bot: Bot, event: MessageEvent) -> None:
     if _is_command_message(prompt):
         return
 
+    session_id = _get_session_id(event)
+    history = chat_memory_store.get_history(session_id)
+
     try:
-        answer = await chat_with_deepseek(prompt)
+        answer = await chat_with_deepseek(prompt, history=history)
+        # 仅在调用成功后写入上下文，避免失败响应污染历史。
+        chat_memory_store.append_turn(session_id, prompt, answer)
     except ValueError as error:
         await chat_with_ds.finish(f"DeepSeek 配置或参数错误：{error}")
     except Exception as error:

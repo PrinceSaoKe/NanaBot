@@ -35,7 +35,8 @@ Regular user commands:
 - `/猜成语`
   Sends the handle rule image first, then starts one handle game.
 - `@BotName <content>`
-  Sends the text after `@` to DeepSeek and returns a short conversational reply (default 1-3 sentences).
+  Sends the text after `@` to DeepSeek and returns a short conversational reply (default 1-3 sentences); group chats and
+  private chats keep separate context memory.
 - `/提示`
   Shows one hint for the current handle game.
 - `/结束`
@@ -130,14 +131,26 @@ Config data is split across JSON and SQLite:
     "private_window_seconds": 10,
     "private_max_requests": 5,
     "block_seconds": 30
+  },
+  "deepseek_chat": {
+    "system_prompt": "你是一个QQ用户，名字叫{bot_name}。回答要像真人聊天，简短、直接、自然。默认用1到3句短句回答，除非用户明确要求详细。不要使用Markdown标题、列表或长段落。",
+    "max_tokens": 180,
+    "max_context_messages": 20
   }
 }
 ```
 
-- `data/config.json`: Stores rate limit configuration.
+- `data/config.json`: Stores rate limit configuration and DeepSeek chat behavior configuration.
 - `data/nanabot.db`: Stores group and user whitelist data.
 - On first startup after this change, legacy whitelist entries in `data/config.json` will be migrated automatically into
   SQLite.
+
+`deepseek_chat` field notes:
+
+- `system_prompt`: DeepSeek system prompt template. You can use the `{bot_name}` placeholder to inject the bot nickname.
+- `max_tokens`: Maximum token budget for a single DeepSeek reply. Must be greater than `0`.
+- `max_context_messages`: Maximum number of context messages kept per group or private chat session. Must be greater
+  than `0`.
 
 Rate limit behavior:
 
