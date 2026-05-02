@@ -40,6 +40,22 @@
   查看当前汉兜游戏提示。
 - `/结束`
   结束当前汉兜游戏。
+- `/steamhelp <SteamID>`
+  查看 Steam 相关功能。
+- `/steambind <SteamID>`
+  将当前发送指令的 QQ 号绑定到指定的 Steam ID 或 Steam 好友代码。
+- `/steamunbind`
+  解绑 Steam ID
+- `steaminfo <@>|<Steam ID>|<Steam 好友代码>`
+  查看 Steam 主页，无参数则查看自己
+- `steamcheck`
+  查看 Steam 好友状态
+- `steamenable`
+  启用 Steam 播报
+- `steamdisable`
+  禁用 Steam 播报
+- `steamnickname <昵称>`
+  设置玩家昵称
 
 管理员命令（仅超管）：
 
@@ -65,6 +81,8 @@
   关闭限流。
 - `/设置限流 用户|群|私聊 <窗口秒数> <最大次数> <封禁秒数>`
   更新限流参数。
+- `/steambind <SteamID> <QQ号>`
+  将指定 QQ 号绑定到给定的 Steam ID 或 Steam 好友代码。
 
 ## 安装依赖
 

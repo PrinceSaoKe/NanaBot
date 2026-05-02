@@ -1,5 +1,5 @@
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import MessageEvent
+from nonebot.adapters.onebot.v11 import MessageEvent, PrivateMessageEvent
 
 from services.auth import is_superuser
 from services.command_registry import get_visible_commands
@@ -16,7 +16,7 @@ async def handle_help(event: MessageEvent) -> None:
     参数：
     - event: 当前消息事件，用于识别发起命令的用户。
     """
-    visible_commands = get_visible_commands(is_superuser(event.get_user_id()))
+    visible_commands = get_visible_commands(is_superuser(event.get_user_id()), isinstance(event, PrivateMessageEvent))
     lines = ["娜娜 Bot 可用命令："]
     for item in visible_commands:
         lines.append(f"{item.command} - {item.description}")

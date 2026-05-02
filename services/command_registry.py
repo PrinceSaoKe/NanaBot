@@ -9,7 +9,7 @@ class CommandInfo:
 
     # 展示给用户的命令文本，例如 `/帮助`。
     command: str
-    # 命令的中文说明。
+    # 命令的简短说明。
     description: str
     # 是否仅超级管理员可见。
     admin_only: bool = False
@@ -24,9 +24,10 @@ COMMAND_REGISTRY: list[CommandInfo] = [
     CommandInfo("/查看菜单 菜品|饮品", "查看对应类型的全部菜单"),
     CommandInfo("/猜单词 -l <3~8>", "使用指定单词长度开启一局 wordle 游戏"),
     CommandInfo("/猜成语", "发送规则图并开启一局汉兜游戏"),
-    CommandInfo("@机器人 <内容>", "将 @ 后文本发送给 DeepSeek"),
+    CommandInfo("@机器人<内容>", "与 AI 聊天"),
     CommandInfo("/提示", "查看当前游戏提示"),
     CommandInfo("/结束", "结束当前游戏"),
+    CommandInfo("/steamhelp", "查看 Steam 相关功能"),
     CommandInfo("/添加菜单 <名称> 菜品|饮品 <图片>", "添加菜单图片", admin_only=True),
     CommandInfo("/删除菜单 <名称> 菜品|饮品", "删除菜单图片", admin_only=True),
     CommandInfo("/白名单", "查看白名单", admin_only=True),
@@ -42,19 +43,20 @@ COMMAND_REGISTRY: list[CommandInfo] = [
         "更新限流参数",
         admin_only=True,
     ),
+    CommandInfo("/steambind <SteamID> <QQ号>", "为指定 QQ 绑定 Steam ID", admin_only=True),
 ]
 
 
-def get_visible_commands(is_superuser: bool) -> list[CommandInfo]:
+def get_visible_commands(is_superuser: bool, is_private_message) -> list[CommandInfo]:
     """
     获取当前用户可见的命令列表。
 
     参数：
-    - is_superuser: `True` 表示当前用户是超级管理员。
+    - is_superuser: `True` 表示当前用户是超级管理员，`False` 表示普通用户。
 
     返回：
     - 当前用户可见的命令展示信息列表。
     """
-    if is_superuser:
+    if is_superuser and is_private_message:
         return COMMAND_REGISTRY
     return [command for command in COMMAND_REGISTRY if not command.admin_only]
